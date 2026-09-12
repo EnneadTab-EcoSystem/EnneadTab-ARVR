@@ -100,18 +100,43 @@ export default function DesktopHub() {
 
   // Check first-time visit for onboarding & initialize session
   useEffect(() => {
-    const randomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    setRoomId(randomId);
-    setOrigin(window.location.origin);
+    const searchParams = new URLSearchParams(window.location.search);
+    const queryRoom = searchParams.get('room') || searchParams.get('roomId');
+    const effectiveRoomId = queryRoom ? queryRoom.toUpperCase() : Math.random().toString(36).substring(2, 8).toUpperCase();
     
-    // Load default preset
-    setModelUrl(PRESET_MODELS[0].url);
-    setModelName(PRESET_MODELS[0].name);
-    setModelSize(PRESET_MODELS[0].size);
+    setRoomId(effectiveRoomId);
+    setOrigin(window.location.origin);
+
+    if (queryRoom) {
+      // Check if room model is already uploaded
+      fetch(`/arvr/api/room/${effectiveRoomId}?meta=1`)
+        .then(async (res) => {
+          if (res.ok) {
+            const data = await res.json();
+            setModelUrl(`/arvr/api/room/${effectiveRoomId}?t=${Date.now()}`);
+            setModelName(data.filename || `ROOM-${effectiveRoomId}.GLB`);
+            setModelSize(`${((data.size || 0) / (1024 * 1024)).toFixed(2)} MB`);
+          } else {
+            setModelUrl(PRESET_MODELS[0].url);
+            setModelName(PRESET_MODELS[0].name);
+            setModelSize(PRESET_MODELS[0].size);
+          }
+        })
+        .catch(() => {
+          setModelUrl(PRESET_MODELS[0].url);
+          setModelName(PRESET_MODELS[0].name);
+          setModelSize(PRESET_MODELS[0].size);
+        });
+    } else {
+      // Load default preset
+      setModelUrl(PRESET_MODELS[0].url);
+      setModelName(PRESET_MODELS[0].name);
+      setModelSize(PRESET_MODELS[0].size);
+    }
 
     try {
       const seen = localStorage.getItem('enneadtab_arvr_onboarded');
-      if (!seen) {
+      if (!seen && !queryRoom) {
         setShowOnboarding(true);
       }
     } catch {}
