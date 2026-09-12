@@ -1,0 +1,12 @@
+# .enneadtab/wiki.yml — EnneadTab Wiki discovery marker (spec §5.3)
+name: EnneadTab-ARVR
+kind: pure-web
+category: 3d-bim
+audience:
+  - internal
+  - client
+visibility: internal
+docs:
+  - CLAUDE.md
+  - DESIGN.md
+  - MENTAL-MODEL.md
