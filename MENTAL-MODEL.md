@@ -22,6 +22,7 @@ This app exists so an architect can instantly beam any Rhino or Revit 3D model t
 - **Ephemeral & Confidential**: Project geometries are held only within ephemeral session scope (2-hour TTL) with zero long-term storage or unauthorized indexing.
 - **Format Interoperability**: Centered on Khronos glTF / GLB open standard for universal 3D web geometry delivery.
 - **EnneadTab Fleet Consistency**: Unified dark aesthetic, responsive mobile typography, and cross-links to EnneadTab Home.
+- **2D Arcade Visual Identity**: CRT scanlines, pixel typography (`Press Start 2P`, `VT323`), 3px solid borders, and synthesized 8-bit sound effects honoring the EnneadTab Arcade design fleet.
 - **House Fleet Attribution**: Persistent footer must link to EnneadTab Home, wiki feedback, and display canonical attribution.
 
 ## Non-goals
@@ -34,3 +35,4 @@ This app exists so an architect can instantly beam any Rhino or Revit 3D model t
 
 ## Happy-path changelog
 - 2026-09-12 - Initial golden happy path established upon service factory pure-web scaffolding - approved by Sen Zhang.
+- 2026-09-12 - Transformed UI/UX to 2D Arcade visual register (CRT scanlines, Google Fonts 'Press Start 2P' / 'VT323', 8-bit Web Audio synth) and added 4-stage interactive onboarding sequence (`<OnboardingModal />`).

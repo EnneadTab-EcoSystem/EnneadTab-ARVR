@@ -6,9 +6,9 @@ import { ExternalLink } from 'lucide-react';
 export const APP_VERSION = '0.1.0';
 export const APP_SLUG = 'arvr';
 
-export function FleetAttributionFooter({ className = '' }: { className?: string }) {
+export function FleetAttributionFooter({ className = '', currentVersion = APP_VERSION }: { className?: string; currentVersion?: string }) {
   const currentYear = new Date().getFullYear();
-  const feedbackUrl = `https://enneadtab.com/wiki/feature-requests/new?source=${APP_SLUG}&version=${APP_VERSION}`;
+  const feedbackUrl = `https://enneadtab.com/wiki/feature-requests/new?source=${APP_SLUG}&version=${currentVersion}`;
 
   return (
     <footer className={`w-full border-t border-slate-800/80 py-4 px-6 text-center text-xs text-slate-400 select-none ${className}`}>

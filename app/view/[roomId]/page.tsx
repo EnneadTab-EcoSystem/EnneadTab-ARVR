@@ -11,7 +11,11 @@ import {
   HelpCircle, 
   Box, 
   ArrowLeft,
-  Share2
+  Share2,
+  Gamepad2,
+  Zap,
+  Check,
+  X
 } from 'lucide-react';
 
 export default function MobileARViewer() {
@@ -24,6 +28,7 @@ export default function MobileARViewer() {
   const [scaleMode, setScaleMode] = useState<'1:1' | 'tabletop'>('tabletop');
   const [sunIntensity, setSunIntensity] = useState<number>(1.0);
   const [showHelp, setShowHelp] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
   const modelViewerRef = useRef<any>(null);
 
   useEffect(() => {
@@ -80,68 +85,71 @@ export default function MobileARViewer() {
       }
     } else {
       navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
   return (
-    <div className="relative w-screen h-[100dvh] bg-[#070a10] flex flex-col overflow-hidden select-none">
-      {/* Top Floating Control Bar */}
+    <div className="relative w-screen h-[100dvh] bg-arcade-dark arcade-scanlines flex flex-col overflow-hidden select-none text-slate-100">
+      {/* Top Floating Arcade Control Bar */}
       <header className="absolute top-0 left-0 right-0 z-30 p-3 sm:p-4 flex items-center justify-between pointer-events-none">
         <div className="flex items-center gap-2 pointer-events-auto">
           <a
             href="/arvr"
-            className="w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700/60 flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg active:scale-95"
+            className="pixel-btn p-2 border-2 border-arcade-border bg-arcade-dark/95 text-slate-300 hover:text-arcade-yellow shadow-pixel-sm flex items-center justify-center"
             title="Return to Desktop Hub"
           >
             <ArrowLeft className="w-4 h-4" />
           </a>
-          <div className="px-3 py-1.5 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700/60 flex items-center gap-2 shadow-lg text-xs font-mono text-slate-200">
-            <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
-            <span>ROOM: <strong>{roomId}</strong></span>
+          <div className="px-2.5 py-1.5 border-2 border-arcade-border bg-arcade-dark/95 flex items-center gap-2 shadow-pixel-sm text-xs font-mono">
+            <span className="w-2 h-2 bg-arcade-green animate-pulse" />
+            <span className="font-pixel text-[9px] text-arcade-yellow">ROOM #{roomId}</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 pointer-events-auto">
           <button
             onClick={() => setShowHelp(true)}
-            className="w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700/60 flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg active:scale-95"
-            title="AR Instructions"
+            className="pixel-btn px-2.5 py-1.5 border-2 border-arcade-cyan bg-arcade-dark/95 text-arcade-cyan font-pixel text-[9px] flex items-center gap-1.5 shadow-pixel-sm"
           >
-            <HelpCircle className="w-4 h-4" />
+            <HelpCircle className="w-3.5 h-3.5" />
+            HELP
           </button>
           <button
             onClick={handleShare}
-            className="w-9 h-9 rounded-full bg-slate-900/80 backdrop-blur-md border border-slate-700/60 flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-lg active:scale-95"
-            title="Share"
+            className="pixel-btn p-2 border-2 border-arcade-border bg-arcade-dark/95 text-slate-300 hover:text-white shadow-pixel-sm"
+            title="Share AR Session"
           >
-            <Share2 className="w-4 h-4" />
+            {copied ? <Check className="w-4 h-4 text-arcade-green" /> : <Share2 className="w-4 h-4" />}
           </button>
         </div>
       </header>
 
-      {/* Main 3D Model / WebAR Canvas */}
-      <div className="flex-1 w-full h-full relative">
+      {/* Main Viewport Container */}
+      <div className="relative flex-1 w-full h-full flex items-center justify-center">
         {loading ? (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-slate-400">
-            <div className="w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-xs font-medium tracking-wide">STREAMING 3D GEOMETRY...</p>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-arcade-yellow border-t-transparent animate-spin" />
+            <p className="font-pixel text-xs text-arcade-yellow tracking-wider">
+              LOADING 3D GEOMETRY...
+            </p>
           </div>
         ) : error ? (
-          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400">
-              <Box className="w-6 h-6" />
-            </div>
-            <h2 className="text-sm font-semibold text-white">Session Unavailable</h2>
-            <p className="text-xs text-slate-400 max-w-xs">{error}</p>
+          <div className="p-6 bg-arcade-panel border-3 border-arcade-red max-w-xs text-center flex flex-col items-center gap-3 shadow-pixel">
+            <span className="font-pixel text-xs text-arcade-red">SESSION EXPIRED</span>
+            <p className="font-mono text-xs text-slate-400 leading-relaxed">
+              {error}
+            </p>
             <a
               href="/arvr"
-              className="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-medium text-white border border-slate-700"
+              className="pixel-btn px-4 py-2 border-2 border-black bg-arcade-yellow text-black font-pixel text-[10px] font-bold shadow-pixel-sm"
             >
-              Return to Desktop Hub
+              RETURN TO HUB
             </a>
           </div>
         ) : (
+          // @ts-ignore
           <model-viewer
             ref={modelViewerRef}
             src={modelUrl}
@@ -158,65 +166,77 @@ export default function MobileARViewer() {
             loading="eager"
             reveal="auto"
           >
+            {/* Native AR Launcher Button */}
             <button
               slot="ar-button"
-              className="absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 px-6 py-3.5 rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-black font-bold text-sm tracking-wide shadow-2xl shadow-teal-500/40 hover:scale-105 active:scale-95 transition-all"
+              className="ar-button-prompt absolute bottom-24 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5"
             >
-              <Camera className="w-5 h-5" />
+              <Camera className="w-4 h-4" />
               VIEW IN YOUR SPACE (AR)
             </button>
           </model-viewer>
         )}
       </div>
 
-      {/* Bottom Floating Control Pill */}
-      <footer className="absolute bottom-4 left-4 right-4 z-30 flex items-center justify-between gap-3 pointer-events-none">
+      {/* Bottom Floating Control Bar */}
+      <footer className="absolute bottom-4 left-4 right-4 z-30 flex items-center justify-between gap-2 pointer-events-none">
         <button
           onClick={toggleScale}
-          className="pointer-events-auto px-3.5 py-2 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-xl flex items-center gap-2 text-xs font-semibold text-white active:scale-95 transition-all"
+          className="pixel-btn pointer-events-auto px-3.5 py-2.5 bg-arcade-panel border-3 border-arcade-border text-slate-100 font-pixel text-[10px] shadow-pixel flex items-center gap-2 hover:border-arcade-yellow"
         >
-          {scaleMode === '1:1' ? <Maximize2 className="w-3.5 h-3.5 text-teal-400" /> : <Minimize2 className="w-3.5 h-3.5 text-teal-400" />}
-          <span>{scaleMode === '1:1' ? '1:1 Site Scale' : 'Tabletop Mode'}</span>
+          {scaleMode === '1:1' ? <Maximize2 className="w-3.5 h-3.5 text-arcade-cyan" /> : <Minimize2 className="w-3.5 h-3.5 text-arcade-cyan" />}
+          <span>{scaleMode === '1:1' ? '1:1 SITE SCALE' : 'TABLETOP MODE'}</span>
         </button>
 
-        <button
-          onClick={resetCamera}
-          className="pointer-events-auto p-2.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-xl text-slate-300 hover:text-white active:scale-95 transition-all"
-          title="Reset 3D View"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <button
+            onClick={resetCamera}
+            className="pixel-btn p-2.5 bg-arcade-panel border-3 border-arcade-border shadow-pixel text-slate-300 hover:text-white"
+            title="Reset 3D Turntable Camera"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
 
-        <button
-          onClick={() => setSunIntensity((prev) => (prev >= 1.5 ? 0.7 : prev + 0.4))}
-          className="pointer-events-auto p-2.5 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 shadow-xl text-slate-300 hover:text-white active:scale-95 transition-all"
-          title="Adjust Sunlight / Exposure"
-        >
-          <Sun className="w-4 h-4 text-amber-400" />
-        </button>
+          <button
+            onClick={() => setSunIntensity((prev) => (prev >= 1.5 ? 0.7 : prev + 0.4))}
+            className="pixel-btn p-2.5 bg-arcade-panel border-3 border-arcade-border shadow-pixel text-arcade-yellow"
+            title="Adjust Sun Intensity"
+          >
+            <Sun className="w-4 h-4" />
+          </button>
+        </div>
       </footer>
 
-      {/* Help Modal */}
+      {/* Arcade Help Modal */}
       {showHelp && (
-        <div className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm p-6 flex items-center justify-center">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-sm w-full flex flex-col gap-4 text-slate-300">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <Camera className="w-4 h-4 text-teal-400" /> How to use Mobile AR
-            </h3>
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm p-4 flex items-center justify-center animate-in fade-in duration-150">
+          <div className="bg-arcade-dark border-3 border-arcade-cyan shadow-pixel-cyan p-5 max-w-sm w-full flex flex-col gap-4 text-slate-200">
+            <div className="flex items-center justify-between border-b-2 border-arcade-border pb-3">
+              <span className="px-2 py-0.5 font-pixel text-[9px] bg-arcade-cyan text-black font-bold flex items-center gap-1.5">
+                <Gamepad2 className="w-3.5 h-3.5" />
+                HOW TO PLAY (AR)
+              </span>
+              <button
+                onClick={() => setShowHelp(false)}
+                className="pixel-btn p-1 bg-arcade-panel text-arcade-red border border-arcade-border"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
             
-            <ol className="text-xs space-y-2.5 list-decimal list-inside text-slate-400">
-              <li>Tap <strong className="text-teal-400">VIEW IN YOUR SPACE</strong>.</li>
-              <li>Point your phone camera toward a flat floor, table, or ground.</li>
-              <li>Slowly move your camera in circular motions so the phone senses plane depth.</li>
-              <li>Tap the surface once plane is recognized to anchor your model.</li>
-              <li>Pinch to resize, two-finger drag to rotate, or switch to 1:1 scale.</li>
+            <ol className="text-xs font-mono space-y-3 list-decimal list-inside text-slate-300 leading-relaxed border-l-2 border-arcade-border pl-2">
+              <li>Tap <strong className="text-arcade-green font-pixel text-[10px]">VIEW IN YOUR SPACE</strong>.</li>
+              <li>Point camera at a flat floor, plaza, or table.</li>
+              <li>Slowly pan in gentle circles to detect plane anchors.</li>
+              <li>Tap surface to lock the 3D model in place.</li>
+              <li>Toggle <strong className="text-arcade-cyan">1:1 SITE SCALE</strong> for full walkaround.</li>
             </ol>
 
             <button
               onClick={() => setShowHelp(false)}
-              className="w-full py-2.5 mt-2 bg-teal-600 hover:bg-teal-500 rounded-xl text-xs font-semibold text-white transition-colors"
+              className="pixel-btn w-full py-2.5 mt-2 bg-arcade-green text-black border border-black font-pixel text-[10px] font-bold shadow-pixel-sm hover:bg-emerald-300"
             >
-              Got it, let's go
+              MISSION READY [OK]
             </button>
           </div>
         </div>
